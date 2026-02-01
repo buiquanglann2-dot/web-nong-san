@@ -5,9 +5,11 @@ import Link from 'next/link';
 import ProductCard from '../components/ProductCard';
 import { PRODUCTS, EVENTS } from '../constants';
 import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
 
 const Home: React.FC = () => {
   const { addToCart } = useCart();
+  const { user } = useAuth();
   const [timeLeft, setTimeLeft] = useState({ hours: 12, minutes: 45, seconds: 30 });
 
   useEffect(() => {
@@ -24,42 +26,79 @@ const Home: React.FC = () => {
 
   // Filter for new products
   const newProducts = useMemo(() => PRODUCTS.filter(p => p.isNew), []);
-  
+
   // Filter for discount products (Flash Sale)
-  const discountProducts = useMemo(() => 
-    PRODUCTS.filter(p => p.originalPrice && p.originalPrice > p.price).slice(0, 5), 
-  []);
+  const discountProducts = useMemo(() =>
+    PRODUCTS.filter(p => p.originalPrice && p.originalPrice > p.price).slice(0, 5),
+    []);
 
   // Get a subset of products for featured section
-  const featuredProducts = useMemo(() => 
-    PRODUCTS.filter(p => !p.isNew && (!p.originalPrice || p.originalPrice <= p.price)).slice(0, 8), 
-  []);
+  const featuredProducts = useMemo(() =>
+    PRODUCTS.filter(p => !p.isNew && (!p.originalPrice || p.originalPrice <= p.price)).slice(0, 8),
+    []);
 
   return (
     <div className="flex flex-col">
+      {/* Member Vouchers Section - Only for Logged In Users */}
+      {user && (
+        <section className="py-10 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border-y border-green-100 dark:border-green-800/30">
+          <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center gap-4 mb-6">
+              <div className="p-3 bg-white dark:bg-[#1a2e1a] rounded-xl shadow-sm text-primary">
+                <span className="material-symbols-outlined text-2xl">confirmation_number</span>
+              </div>
+              <div>
+                <h2 className="text-2xl font-black text-gray-900 dark:text-white">Voucher thành viên</h2>
+                <p className="text-sm font-medium text-gray-500 max-w-xl">Dành riêng cho bạn! Lưu mã ngay để áp dụng khi thanh toán.</p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {[
+                { code: 'FREESHIP', value: 'Freeship', desc: 'Đơn từ 300k', color: 'bg-blue-500' },
+                { code: 'HELLO', value: 'Giảm 20k', desc: 'Cho đơn đầu tiên', color: 'bg-orange-500' },
+                { code: 'ORGANIC', value: 'Giảm 10%', desc: 'Tối đa 50k', color: 'bg-primary' }
+              ].map((voucher, idx) => (
+                <div key={idx} className="bg-white dark:bg-[#1a2e1a] p-5 rounded-2xl shadow-sm border border-gray-100 dark:border-green-800/50 flex items-center justify-between relative overflow-hidden group hover:scale-[1.02] transition-transform">
+                  <div className={`absolute -left-3 top-0 bottom-0 w-6 ${voucher.color} skew-x-[-10deg]`}></div>
+                  <div className="pl-6 flex flex-col">
+                    <span className="font-black text-xl text-gray-800 dark:text-white">{voucher.value}</span>
+                    <span className="text-xs font-bold text-gray-400">{voucher.desc}</span>
+                  </div>
+                  <div className="flex flex-col items-end gap-2 z-10">
+                    <span className="text-xs font-bold bg-gray-100 dark:bg-black/20 px-2 py-1 rounded text-gray-500">{voucher.code}</span>
+                    <button className="text-xs font-black text-primary hover:underline">Lưu mã</button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Hero Section */}
       <section className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="relative overflow-hidden rounded-3xl bg-gray-900 shadow-2xl">
           <div className="absolute inset-0">
             <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent z-10"></div>
-            <div 
+            <div
               className="w-full h-full bg-cover bg-center"
               style={{ backgroundImage: "url('https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=2074&auto=format&fit=crop')" }}
             />
           </div>
           <div className="relative z-20 px-8 py-16 sm:px-16 sm:py-24 lg:py-32 flex flex-col items-start gap-6 max-w-2xl">
             <span className="inline-flex items-center gap-2 rounded-full bg-primary/20 backdrop-blur-md px-4 py-1.5 text-xs font-bold text-primary border border-primary/30">
-              <span className="material-symbols-outlined text-sm icon-filled">verified</span> 
+              <span className="material-symbols-outlined text-sm icon-filled">verified</span>
               100% Hữu Cơ - Tươi Sạch
             </span>
             <h2 className="text-4xl font-black tracking-tight text-white sm:text-6xl leading-tight">
-              Rau Củ Tươi Ngon <br/> <span className="text-primary">Mới Về Mỗi Ngày</span>
+              Rau Củ Tươi Ngon <br /> <span className="text-primary">Mới Về Mỗi Ngày</span>
             </h2>
             <p className="text-lg leading-relaxed text-gray-300">
               Ưu đãi <span className="text-white font-bold">Giảm 20%</span> cho khách hàng mới. Chúng tôi cam kết mang lại nguồn thực phẩm sạch, an toàn cho bữa cơm gia đình bạn.
             </p>
             <div className="mt-4 flex flex-wrap gap-4">
-              <Link 
+              <Link
                 href="/products"
                 className="flex items-center justify-center rounded-xl bg-primary px-8 py-4 text-base font-bold text-black shadow-lg shadow-primary/30 hover:bg-green-400 transition-all transform hover:-translate-y-1 active:scale-95"
               >
@@ -149,7 +188,7 @@ const Home: React.FC = () => {
             {EVENTS.map(event => (
               <div key={event.id} className="group flex flex-col bg-background-light dark:bg-gray-900 rounded-[2.5rem] overflow-hidden border border-gray-100 dark:border-green-800/30 hover:shadow-2xl transition-all duration-500">
                 <div className="relative h-64 overflow-hidden">
-                  <div 
+                  <div
                     className="absolute inset-0 bg-cover bg-center group-hover:scale-110 transition-transform duration-1000"
                     style={{ backgroundImage: `url('${event.image}')` }}
                   />
