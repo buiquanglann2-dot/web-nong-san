@@ -1,3 +1,6 @@
+-- Drop existing table if it exists to reset
+drop table if exists public.products;
+
 -- Create products table
 create table public.products (
   id text primary key,
