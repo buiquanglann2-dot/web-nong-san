@@ -1,6 +1,5 @@
-
 import React from 'react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import { Product } from '../types';
 
 interface ProductCardProps {
@@ -21,7 +20,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
           <span className="absolute top-2 right-2 bg-primary text-black text-[10px] font-bold px-2 py-1 rounded-md z-10">Mới</span>
         )}
         
-        <Link to={`/product/${product.id}`}>
+        <Link href={`/product/${product.id}`}>
           <div 
             className="w-full h-full bg-cover bg-center group-hover:scale-105 transition-transform duration-700"
             style={{ backgroundImage: `url('${product.image}')` }}
@@ -37,7 +36,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
       </div>
 
       <div className="flex flex-col gap-1">
-        <Link to={`/product/${product.id}`}>
+        <Link href={`/product/${product.id}`}>
           <h3 className="font-bold text-gray-900 dark:text-white group-hover:text-primary transition-colors truncate">
             {product.name}
           </h3>

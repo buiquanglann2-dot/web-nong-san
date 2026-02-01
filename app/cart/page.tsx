@@ -1,7 +1,8 @@
+'use client';
 
 import React, { useMemo } from 'react';
-import { Link } from 'react-router-dom';
-import { useCart } from '../context/CartContext';
+import Link from 'next/link';
+import { useCart } from '../../context/CartContext';
 
 const Cart: React.FC = () => {
   const { cart, updateQuantity, removeFromCart, clearCart } = useCart();
@@ -18,7 +19,7 @@ const Cart: React.FC = () => {
         <div className="flex flex-col items-center justify-center py-20 bg-white dark:bg-[#1a2e1a] rounded-3xl border border-gray-100 dark:border-green-800 shadow-sm">
           <span className="material-symbols-outlined text-6xl text-gray-200 mb-4">shopping_basket</span>
           <h2 className="text-xl font-bold mb-4">Giỏ hàng đang trống</h2>
-          <Link to="/products" className="bg-primary px-8 py-3 rounded-xl font-bold hover:scale-105 transition-all">Mua sắm ngay</Link>
+          <Link href="/products" className="bg-primary px-8 py-3 rounded-xl font-bold hover:scale-105 transition-all">Mua sắm ngay</Link>
         </div>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">

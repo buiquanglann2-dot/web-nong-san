@@ -1,6 +1,7 @@
+'use client';
 
 import React, { useMemo, useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import ProductCard from '../components/ProductCard';
 import { PRODUCTS, EVENTS } from '../constants';
 import { useCart } from '../context/CartContext';
@@ -59,7 +60,7 @@ const Home: React.FC = () => {
             </p>
             <div className="mt-4 flex flex-wrap gap-4">
               <Link 
-                to="/products"
+                href="/products"
                 className="flex items-center justify-center rounded-xl bg-primary px-8 py-4 text-base font-bold text-black shadow-lg shadow-primary/30 hover:bg-green-400 transition-all transform hover:-translate-y-1 active:scale-95"
               >
                 Mua Ngay
@@ -122,7 +123,7 @@ const Home: React.FC = () => {
                   <p className="text-gray-500 dark:text-gray-400 text-sm font-medium">Nông sản tươi nhất vừa cập bến FreshFarm</p>
                 </div>
               </div>
-              <Link to="/products" className="hidden sm:flex items-center gap-2 text-sm font-black text-primary hover:gap-3 transition-all">
+              <Link href="/products" className="hidden sm:flex items-center gap-2 text-sm font-black text-primary hover:gap-3 transition-all">
                 Xem thêm
                 <span className="material-symbols-outlined">arrow_right_alt</span>
               </Link>
@@ -185,7 +186,7 @@ const Home: React.FC = () => {
               <h2 className="text-3xl font-black tracking-tight text-gray-900 dark:text-white">Sản phẩm nổi bật</h2>
               <div className="w-20 h-1.5 bg-primary rounded-full mt-2"></div>
             </div>
-            <Link to="/products" className="text-sm font-bold text-primary hover:underline flex items-center gap-1">
+            <Link href="/products" className="text-sm font-bold text-primary hover:underline flex items-center gap-1">
               Xem tất cả <span className="material-symbols-outlined text-sm">arrow_forward</span>
             </Link>
           </div>

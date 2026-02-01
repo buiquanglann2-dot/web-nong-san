@@ -1,8 +1,9 @@
+'use client';
 
 import React, { useState, useMemo } from 'react';
-import ProductCard from '../components/ProductCard';
-import { PRODUCTS } from '../constants';
-import { useCart } from '../context/CartContext';
+import ProductCard from '../../components/ProductCard';
+import { PRODUCTS } from '../../constants';
+import { useCart } from '../../context/CartContext';
 
 const Products: React.FC = () => {
   const { addToCart } = useCart();

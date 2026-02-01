@@ -1,17 +1,20 @@
+'use client';
 
-import React, { useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { PRODUCTS } from '../constants';
-import { Review } from '../types';
-import { useCart } from '../context/CartContext';
+import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { useParams } from 'next/navigation';
+import { PRODUCTS } from '../../../constants';
+import { Review } from '../../../types';
+import { useCart } from '../../../context/CartContext';
 
 const ProductDetail: React.FC = () => {
   const { addToCart } = useCart();
-  const { id } = useParams();
+  const params = useParams();
+  const id = params?.id as string;
   const product = PRODUCTS.find(p => p.id === id);
   
   const [quantity, setQuantity] = useState(1);
-  const [reviews, setReviews] = useState<Review[]>(product?.reviewsList || []);
+  const [reviews, setReviews] = useState<Review[]>([]);
   const [newReview, setNewReview] = useState({
     userName: '',
     rating: 5,
@@ -19,11 +22,17 @@ const ProductDetail: React.FC = () => {
   });
   const [submitting, setSubmitting] = useState(false);
 
+  useEffect(() => {
+    if (product?.reviewsList) {
+      setReviews(product.reviewsList);
+    }
+  }, [product]);
+
   if (!product) {
     return (
       <div className="flex flex-col items-center justify-center py-40">
         <h2 className="text-2xl font-black mb-4">Sản phẩm không tồn tại</h2>
-        <Link to="/products" className="bg-primary px-8 py-3 rounded-xl font-bold">Quay lại cửa hàng</Link>
+        <Link href="/products" className="bg-primary px-8 py-3 rounded-xl font-bold">Quay lại cửa hàng</Link>
       </div>
     );
   }
@@ -54,9 +63,9 @@ const ProductDetail: React.FC = () => {
     <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-40 py-10">
       {/* Breadcrumbs */}
       <nav className="flex items-center gap-2 text-sm font-medium mb-10">
-        <Link to="/" className="text-gray-500 hover:text-primary transition-colors">Trang chủ</Link>
+        <Link href="/" className="text-gray-500 hover:text-primary transition-colors">Trang chủ</Link>
         <span className="material-symbols-outlined text-sm text-gray-400">chevron_right</span>
-        <Link to="/products" className="text-gray-500 hover:text-primary transition-colors">Sản phẩm</Link>
+        <Link href="/products" className="text-gray-500 hover:text-primary transition-colors">Sản phẩm</Link>
         <span className="material-symbols-outlined text-sm text-gray-400">chevron_right</span>
         <span className="text-primary">{product.name}</span>
       </nav>

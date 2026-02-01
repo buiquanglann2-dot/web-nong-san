@@ -1,23 +1,45 @@
+'use client';
 
-import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { useCart } from '../context/CartContext';
 
-interface HeaderProps {
-  cartCount: number;
-  toggleDarkMode: () => void;
-  isDarkMode: boolean;
-}
+const Header: React.FC = () => {
+  const { cartCount } = useCart();
+  const pathname = usePathname();
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
-const Header: React.FC<HeaderProps> = ({ cartCount, toggleDarkMode, isDarkMode }) => {
-  const location = useLocation();
+  useEffect(() => {
+    // Check initial dark mode preference
+    if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      setIsDarkMode(true);
+      document.documentElement.classList.add('dark');
+    } else {
+      setIsDarkMode(false);
+      document.documentElement.classList.remove('dark');
+    }
+  }, []);
 
-  const isActive = (path: string) => location.pathname === path;
+  const toggleDarkMode = () => {
+    if (isDarkMode) {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+      setIsDarkMode(false);
+    } else {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+      setIsDarkMode(true);
+    }
+  };
+
+  const isActive = (path: string) => pathname === path;
 
   return (
     <header className="sticky top-0 z-50 bg-white/95 dark:bg-[#102210]/95 backdrop-blur-md border-b border-[#f0f5f0] dark:border-green-900/30 px-4 md:px-10 py-3 shadow-sm transition-all">
       <div className="max-w-[1440px] mx-auto flex items-center justify-between gap-4">
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-2 sm:gap-4 shrink-0">
+        <Link href="/" className="flex items-center gap-2 sm:gap-4 shrink-0">
           <div className="size-8 sm:size-10 text-primary flex items-center justify-center rounded-xl bg-primary/20">
             <span className="material-symbols-outlined text-2xl sm:text-3xl icon-filled">eco</span>
           </div>
@@ -29,25 +51,25 @@ const Header: React.FC<HeaderProps> = ({ cartCount, toggleDarkMode, isDarkMode }
         {/* Desktop Nav */}
         <nav className="hidden lg:flex items-center gap-8">
           <Link 
-            to="/" 
+            href="/" 
             className={`text-sm font-bold transition-colors ${isActive('/') ? 'text-primary' : 'text-gray-600 dark:text-gray-300 hover:text-primary'}`}
           >
             Trang chủ
           </Link>
           <Link 
-            to="/products" 
+            href="/products" 
             className={`text-sm font-bold transition-colors ${isActive('/products') ? 'text-primary' : 'text-gray-600 dark:text-gray-300 hover:text-primary'}`}
           >
             Sản phẩm
           </Link>
           <Link 
-            to="/blog" 
+            href="/blog" 
             className={`text-sm font-bold transition-colors ${isActive('/blog') ? 'text-primary' : 'text-gray-600 dark:text-gray-300 hover:text-primary'}`}
           >
             Blog
           </Link>
           <Link 
-            to="/about" 
+            href="/about" 
             className={`text-sm font-bold transition-colors ${isActive('/about') ? 'text-primary' : 'text-gray-600 dark:text-gray-300 hover:text-primary'}`}
           >
             Về chúng tôi
@@ -80,7 +102,7 @@ const Header: React.FC<HeaderProps> = ({ cartCount, toggleDarkMode, isDarkMode }
           </button>
           
           <Link 
-            to="/cart" 
+            href="/cart" 
             className="relative p-2 rounded-lg text-gray-500 hover:bg-gray-100 dark:hover:bg-green-900/30 transition-colors"
           >
             <span className="material-symbols-outlined text-[22px]">shopping_cart</span>
@@ -92,7 +114,7 @@ const Header: React.FC<HeaderProps> = ({ cartCount, toggleDarkMode, isDarkMode }
           </Link>
 
           <Link 
-            to="/account"
+            href="/account"
             className={`flex items-center gap-2 p-1.5 pl-2 pr-4 rounded-full transition-colors border border-transparent ${isActive('/account') ? 'bg-primary text-black' : 'bg-gray-100 dark:bg-[#1a2e1a] hover:bg-gray-200 dark:hover:bg-green-900/30 dark:border-green-800/50 text-gray-900 dark:text-white'}`}
           >
             <div className={`size-8 rounded-full flex items-center justify-center shadow-sm ${isActive('/account') ? 'bg-black/10' : 'bg-white dark:bg-green-800'}`}>
