@@ -132,6 +132,18 @@ const Header: React.FC = () => {
               {user ? (user.user_metadata.full_name || 'Tài khoản') : 'Tài khoản'}
             </span>
           </Link>
+
+          {user && (
+            <Link
+              href="/admin"
+              className={`flex items-center gap-2 p-1.5 pl-2 pr-4 rounded-full transition-colors border border-transparent ${isActive('/admin') ? 'bg-primary text-black' : 'bg-gray-100 dark:bg-[#1a2e1a] hover:bg-gray-200 dark:hover:bg-green-900/30 dark:border-green-800/50 text-gray-900 dark:text-white'}`}
+            >
+              <div className={`size-8 rounded-full flex items-center justify-center shadow-sm ${isActive('/admin') ? 'bg-black/10' : 'bg-white dark:bg-green-800'}`}>
+                <span className="material-symbols-outlined text-sm">settings</span>
+              </div>
+              <span className="text-sm font-bold hidden sm:block">Admin</span>
+            </Link>
+          )}
         </div>
       </div>
     </header>
