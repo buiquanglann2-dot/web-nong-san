@@ -3,14 +3,59 @@
 import React, { useMemo, useEffect, useState } from 'react';
 import Link from 'next/link';
 import ProductCard from '../components/ProductCard';
-import { PRODUCTS, EVENTS } from '../constants';
+import { EVENTS } from '../constants'; // Removed PRODUCTS import
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
+import { supabase } from '../lib/supabase';
+import { Product } from '../types';
 
 const Home: React.FC = () => {
   const { addToCart } = useCart();
   const { user } = useAuth();
   const [timeLeft, setTimeLeft] = useState({ hours: 12, minutes: 45, seconds: 30 });
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch products from Supabase
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const { data, error } = await supabase.from('products').select('*');
+
+        if (error) {
+          console.error('Error fetching products:', error);
+          return;
+        }
+
+        if (data) {
+          // Map DB snake_case to Frontend camelCase
+          const mappedProducts: Product[] = data.map((item: any) => ({
+            id: item.id,
+            name: item.name,
+            price: item.price,
+            originalPrice: item.original_price, // map original_price
+            unit: item.unit,
+            image: item.image,
+            category: item.category,
+            origin: item.origin,
+            rating: item.rating,
+            reviews: item.reviews,
+            isNew: item.is_new, // map is_new
+            isVietGap: item.is_viet_gap, // map is_viet_gap
+            description: item.description,
+            reviewsList: [] // Default empty review list for now
+          }));
+          setProducts(mappedProducts);
+        }
+      } catch (err) {
+        console.error('Unexpected error:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -25,17 +70,17 @@ const Home: React.FC = () => {
   }, []);
 
   // Filter for new products
-  const newProducts = useMemo(() => PRODUCTS.filter(p => p.isNew), []);
+  const newProducts = useMemo(() => products.filter(p => p.isNew), [products]);
 
   // Filter for discount products (Flash Sale)
   const discountProducts = useMemo(() =>
-    PRODUCTS.filter(p => p.originalPrice && p.originalPrice > p.price).slice(0, 5),
-    []);
+    products.filter(p => p.originalPrice && p.originalPrice > p.price).slice(0, 5),
+    [products]);
 
   // Get a subset of products for featured section
   const featuredProducts = useMemo(() =>
-    PRODUCTS.filter(p => !p.isNew && (!p.originalPrice || p.originalPrice <= p.price)).slice(0, 8),
-    []);
+    products.filter(p => !p.isNew && (!p.originalPrice || p.originalPrice <= p.price)).slice(0, 8),
+    [products]);
 
   return (
     <div className="flex flex-col">
